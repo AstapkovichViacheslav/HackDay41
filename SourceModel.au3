@@ -14,7 +14,7 @@ Global $oError = ObjEvent("AutoIt.Error", "_ErrFunc")
 _AutoItObject_StartUp()
 
 Func _ErrFunc()
-	ConsoleWrite("!> ERR = "& $oError.description & @CRLF)
+	;ConsoleWrite("!> ERR = "& $oError.description & @CRLF)
 EndFunc
 
 Func _Source($SourcePath="")
@@ -97,7 +97,8 @@ Func _Source_open($oSelf)
 	If $oSelf.model.getSrc() = "" Then
 		$oSelf.model.setSrc($oSelf.src)
 	EndIf
-	$oSelf.model.open()
+	Local $code = $oSelf.model.open()
+	_DebugOut("+> Источник данных открыт:"&$code)
 EndFunc
 
 

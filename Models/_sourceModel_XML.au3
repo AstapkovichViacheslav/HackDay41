@@ -52,7 +52,12 @@ EndFunc
 
 ;Открытие источника
 Func _SourceXML_open($oSelf)
-	if $oSelf.src = "" then return 0
+	if $oSelf.src = "" then
+		ConsoleWrite("!> XML: Не указан путь" & @CRLF)
+		return 0
+	EndIf
 	Local $code = $oSelf.obj.Load($oSelf.src)
-	return $code
+	msgbox(0,"test",$oSelf.obj.readyState)
+	;https://msdn.microsoft.com/en-us/library/ms753702(v=vs.85).aspx
+	return $oSelf.obj.readyState = 4
 EndFunc
