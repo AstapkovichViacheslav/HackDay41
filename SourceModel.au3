@@ -2,20 +2,10 @@
 
 
 #ce
-#RequireAdmin
-#include-once
-#include <Debug.au3>
-#include <AutoItObject.au3>
-#include ".\Models\_sourceModel_XML.au3"
-_DebugSetup("DEBUG",true,2)
-Opt("MustDeclareVars", 1)
 
-Global $oError = ObjEvent("AutoIt.Error", "_ErrFunc")
-_AutoItObject_StartUp()
 
-Func _ErrFunc()
-	;ConsoleWrite("!> ERR = "& $oError.description & @CRLF)
-EndFunc
+
+
 
 Func _Source($SourcePath="")
     Local $oClass = _AutoItObject_Class()
@@ -258,14 +248,6 @@ Func _Source_setParam($oSelf, $Param, $Value)
 	_DebugOut("+> Изменение параметра '"& $Param &"'" )
 	return $code
 EndFunc
-
-
-
-
-
-
-
-WriteTest()
 
 
 Func WriteTest()
