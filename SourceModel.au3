@@ -20,15 +20,18 @@ EndFunc
 Func _Source($SourcePath="")
     Local $oClass = _AutoItObject_Class()
     With $oClass
-		.AddMethod("setSrc", 	"_Source_setSrc")
-		.AddMethod("getSrc", 	"_Source_getSrc")
-        .AddMethod("setModel", 	"_Source_setModel")
-        .AddMethod("create", 	"_Source_create")
-		.AddMethod("open", 		"_Source_open")
-		.AddMethod("isReady",	"_Source_isReady")
+		.AddMethod("setSrc", 	"_Source_setSrc")		;Указать путь к источнику
+		.AddMethod("getSrc", 	"_Source_getSrc")		;Получить путь к источнику
+        .AddMethod("setModel", 	"_Source_setModel")		;Указать библиотеку модели (XML, TXT и т.п.)
+        .AddMethod("create", 	"_Source_create")		;Создать источник
+		.AddMethod("open", 		"_Source_open")			;Открыть источник
+		.AddMethod("isReady",	"_Source_isReady")		;Готов ли источник к работе
+		.AddMethod("getData",	"_Source_getData")
+		.AddMethod("select",	"_Source_selectData")
+
 		.AddMethod("createNode","_Source_createNode")
 		.AddMethod("selectNode","_Source_selectNode")
-		.AddMethod("getData",	"_Source_getData")
+
 		.AddProperty("src", 	$ELSCOPE_PRIVATE, $SourcePath)
         .AddProperty("model", 	$ELSCOPE_PRIVATE, null)
     EndWith
@@ -69,7 +72,7 @@ Func _Source_setModel($oSelf, $ModelObj)
 	_DebugOut("+> Выбрана модель для работы с источником")
 EndFunc
 
-;Открыть источник для работы с данными
+;Создать источник для работы с данными
 Func _Source_create($oSelf)
 	#forceref $oSelf
 	If $oSelf.src = "" Then
@@ -84,6 +87,7 @@ Func _Source_create($oSelf)
 	return $Ret
 EndFunc
 
+;Открыть источник для работы с данными
 Func _Source_open($oSelf)
 	#forceref $oSelf
 	If not IsObj($oSelf.model) Then
@@ -101,9 +105,96 @@ Func _Source_open($oSelf)
 	_DebugOut("+> Источник данных открыт:"&$code)
 EndFunc
 
+Func _Source_getData($oSelf)
+	#forceref $oSelf
+	If not IsObj($oSelf.model) Then
+		_DebugOut("!> Для работы с данными не указана модель!")
+		return
+	EndIf
+	If not $oSelf.model.isReady Then
+		_DebugOut("!> Источник данных не готов!")
+		Return
+	EndIf
+	Local $Data = $oSelf.model.getData()
+	_DebugOut("+> Получены данные:"& IsArray($Data) )
+	return $Data
+EndFunc
 
-Local $src = _Source()
-$src.setSrc("C:\test.xml")
-$src.setModel( _Source_XML() )
-$src.create()
-$src.open()
+Func _Source_selectData($oSelf, $XPath, $dataArray="")
+	#forceref $oSelf
+	Local $Data
+	If IsArray($dataArray) Then
+		$Data = $dataArray
+	Else
+		$Data = $oSelf.getData()
+	EndIf
+	IF $XPAth = "" then return $Data
+	Local $cTag
+	Local $Path = StringSplit($XPath,"/")
+	_DebugOut("+> Поиск элемента: '"& $XPath &"'")
+	For $i=1 to $Path[0]
+		;Опредеим искомый нод и его атрибуты
+		Local $params = StringRegExp($Path[$i],"(?U)(@.*='.*')",3)
+		If IsArray($params) Then
+			$cTag = StringMid($Path[$i],1, StringInStr($Path[$i],"[")-1)
+		Else
+			$cTag = $Path[$i]
+		EndIf
+		;ConsoleWrite($cTag & @TAB & UBound($params) & @TAB & IsArray($params) & @CRLF)
+		;Если это корневой элемент - идём дальше
+		If $i=1 and $cTag = $Data[0][1] and not IsArray($params) then
+			ContinueLoop
+		EndIf
+		;Ищем среди дочерних нодов указанный
+		For $z=2 to UBound($Data)-1
+			If $Data[$z][0] <> $cTag then ContinueLoop
+
+			Local $Item = $Data[$z][1]
+			If not IsArray($Params) then
+				$Data = $Item ;Параметры не указны - берём что нашли
+				ContinueLoop 2
+			EndIf
+			;Если указаны атрибуты - они должны все совпасть для узла
+			For $p=0 to UBound($params)-1
+				Local $split=StringSPlit($params[$p],"=") ;[папаметр, значение]
+				$split[1] = StringMid($split[1],2, StringLen($split[1]))
+				$split[2] = StringMid($split[2],2, StringLen($split[2])-2)
+				;ConsoleWrite("Ищу параметр '"&$split[1] & " со значением " & $split[2] & " среди элементов: "& UBound($Item)-1& @CRLF)
+				;Ищем среди атрибутов узла текущий атрибут
+				Local $found = False
+				For $a=2 to UBound($Item)-1
+					If StringLen($Item[$a][0]) = 0 then ContinueLoop
+					IF $Item[$a][0] = $split[1] and $Item[$a][1]= $split[2] Then
+						;ConsoleWrite("Нашли" & @CRLF)
+						$found = True
+						ExitLoop
+					EndIf
+				Next
+				If not $found then ContinueLoop 2 ;Если не нашли - переходим к обработке следующего дочернего нода
+			Next
+			;Узел найден, атрибуты все совпадают
+			$Data = $Item
+			ContinueLoop 2
+		Next
+		;Если дошло до сюда - путь не найден
+		_DebugOut("!> Не удалось найти элемент: '"& $cTag &"'!")
+		Return
+	Next
+	return $Data
+EndFunc
+
+
+Local $src = _Source()			;Создаю ресурс
+$src.setSrc("C:\pim.xml")		;Указываю путь
+$src.setModel( _Source_XML() )	;Указываю способ обработки
+;$src.create()
+$src.open()						;Открываю источник
+Local $PIM = $src.getData()		;Получаю данные
+;Ищу строку без параметров
+Local $String = "w:wordDocument/o:DocumentProperties/o:Title"
+Local $Node = $src.select($String,$PIM)
+ConsoleWrite("1 test: "& $Node[1][1] & @CRLF)
+;Ищу строку с параметром
+Local $String = "w:wordDocument/w:styles/w:style[@w:styleId='2']/wx:uiName"
+Local $Node = $src.select($String,$PIM)
+ConsoleWrite("2 test: "& $Node[2][1] & @CRLF)
