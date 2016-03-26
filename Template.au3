@@ -36,8 +36,30 @@ Func Template_saveDocAsXMLwithWord($FilePath)
 	return $fName
 EndFunc
 
+Func Template_getTemplateList()
+	Local $PathStr = _FileListToArray( $Pref("TemplatePath"), "tmp_*.xml")
+	If not IsArray($PathStr) then return ""
+	For $i=1 to $PathStr[0]
+		$PathStr[$i]=  $Pref("TemplatePath") &"\"& $PathStr[$i]
+	Next
+	return $PathStr
+EndFunc
 
-Func Template_analyze($FilePath)
+Func Template_createTemplateFile($FileName)
+	If $FileName = "" then return ""
+	Local $Path = $Pref("TemplatePath") &"\tmp_"& $FileName & ".xml"
+	Local $src = _Source()			;Создаю ресурс
+	$src.setSrc($Path)				;Указываю путь
+	$src.setModel( _Source_XML() )	;Указываю способ обработки
+	$src.create()
+	$src.open()
+	Local $Node = $src.element("Templates")
+	$src.createNode($Node)
+	$src.save()
+	return $src
+EndFunc
+
+Func Template_prepare($FilePath)
 	IF not FileExists($FilePath) Then
 		_DebugOut("!> Для шаблона передан несуществующий файл")
 		return 0
@@ -61,4 +83,10 @@ Func Template_analyze($FilePath)
 	EndIf
 	;Теперь, будем искать нужные нам узлы
 	msgbox(0,"Run analyze","ok")
+	$src = _Source()				;Создаю ресурс
+	$src.setSrc($Path)				;Указываю путь
+	$src.setModel( _Source_XML() )	;Указываю способ обработки
+	$src.open()						;Открываю источник
+	Local $dataSet = $src.getData()	;Получаю данные
+	return $dataSet
 EndFunc
