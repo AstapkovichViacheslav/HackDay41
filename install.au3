@@ -11,6 +11,7 @@
 #include <Array.au3>
 #include <FileConstants.au3>
 #include <StringConstants.au3>
+#include <MsgBoxConstants.au3>
 
 #region GUI
 
@@ -106,8 +107,12 @@ Func Install()
 						SetUserInfo(True)
 						GUICtrlSetData($Steps_Label, StringFormat("Шаг 2: Регистрация данных о пользователе в системе"))
 					Case 3
+						$installStep = $installStep + 1
 						SetUserInfo(False)
+						deletePreviouslyInstalled()
 						GUICtrlSetData($Steps_Label, StringFormat("Шаг 3: Завершение установки"))
+					Case Else
+
 				EndSwitch
 		EndSwitch
 	WEnd
@@ -172,4 +177,29 @@ Func CreateMenuItem($GroupName)
 	RegWrite($key,"MUIVerb","REG_SZ",$GroupName)
 	RegWrite($key,"SubCommands","REG_SZ",$GroupName&"1" &";"& $Groupname&"2")
 	;http://rapidsoft.org/articles/wintuning/item/101-context_menu_section
+EndFunc
+
+Func deletePreviouslyInstalled()
+	Local $message
+	local $result
+
+	For $reg in $arrRegDelete
+		$result = RegDelete($reg)
+		If 	$result <> 1 then
+			Switch $result
+				Case 0
+					$message = "Ключ: " & $reg & @LF & " не найден"
+				Case 2
+					$message = "Ошибка удаления ключа" & @LF & $reg
+			EndSwitch
+		MsgBox($MB_ICONERROR, "Ошибка удаления из реестра", $message)
+		EndIf
+	Next
+
+	For $dir in $arrDirDelete
+		$result = FileDelete($dir)
+		If $result <> 1 Then
+			MsgBox($MB_ICONERROR, "Ошибка удаления каталога", "Ошибка удаления папки:" & @LF & $dir)
+		EndIf
+	Next
 EndFunc
