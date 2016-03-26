@@ -24,6 +24,7 @@ Func _Source($SourcePath="")
 
 		.AddMethod("createNode","_Source_createNode")	;Создание узла
 		.AddMethod("selectNode","_Source_selectNode")	;Выбор узла (переход в узел)
+		.AddMethod("deleteNode","_Source_deleteNode")	;Выбор узла (переход в узел)
 		.AddMethod("setParam",	"_Source_setParam")		;Указать атрибуты/параметры узла
 
 		.AddProperty("src", 	$ELSCOPE_PRIVATE, $SourcePath)
@@ -246,6 +247,17 @@ Func _Source_setParam($oSelf, $Param, $Value)
 	EndIf
 	Local $code = $oSelf.model.setParam($Param, $Value)
 	_DebugOut("+> Изменение параметра '"& $Param &"'" )
+	return $code
+EndFunc
+
+Func _Source_deleteNode($oSelf)
+	#forceref $oSelf
+	If not IsObj($oSelf.model) Then
+		_DebugOut("!> Для работы с данными не указана модель!")
+		return
+	EndIf
+	Local $code = $oSelf.model.deleteNode()
+	_DebugOut("+> Удаление текущего элемента")
 	return $code
 EndFunc
 

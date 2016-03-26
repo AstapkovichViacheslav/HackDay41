@@ -16,6 +16,7 @@ Func _Source_XML()
 
 		.AddMethod("createNode","_SourceXML_createNode")
 		.AddMethod("selectNode","_SourceXML_selectNode")
+		.AddMethod("deleteNode","_SourceXML_deleteNode")
 		.AddMethod("setParam",	"_SourceXML_setParam")
 
         .AddProperty("obj", $ELSCOPE_PRIVATE, ObjCreate("Microsoft.XMLDOM") )
@@ -81,7 +82,14 @@ Func _SourceXML_getData($oSelf, $oNode="")
 	Else
 		$Node = $oNode
 	EndIf
-	IF StringLen($Node.tagName) = 0 then return ""
+	If not IsObj($Node) Then
+		ConsoleWrite("!> Ошибка! Узел получения данных не найден!" & @CRLF)
+		return 0
+	Endif
+	IF StringLen($Node.tagName) = 0 then
+		ConsoleWrite("!> Ошибка определения узла получения данных." & @CRLF)
+		return 0
+	EndIf
 	Local $Attribs[2][2]
 	;Стандартные атрибуты узла
 	$Attribs[0][0] = "tagName"
@@ -103,20 +111,53 @@ Func _SourceXML_getData($oSelf, $oNode="")
 		Redim $Attribs[ UBound($Attribs)+1 ][2]
 		$Attribs[ UBound($Attribs)-1 ][0] = $Child.item($i).tagName
 		$Attribs[ UBound($Attribs)-1 ][1] = $oSelf.getData($Child.item($i))
+		ConsoleWrite($Child.item($i).tagName & @CRLF)
 	Next
 	;Возвращаем собранный массив
+	If $oNode="" then _SourceXML_printData($Attribs)
 	return $Attribs
+EndFunc
+
+Func _SourceXML_printData($Attribs, $level=0)
+	Local $cnt = UBound($Attribs)-1
+	;ConsoleWrite("<<<PRINT DATA>>> Items:"& $cnt & @CRLF)
+	For $I=0 to $cnt
+		For $z=1 to $level
+			ConsoleWrite(" ")
+		Next
+		If not IsArray($Attribs[$i][1]) then
+			ConsoleWrite("["&$i&"]"&$Attribs[$i][0]&":"&$Attribs[$i][1] & @CRLF)
+		Else
+			Local $Item = $Attribs[$i][1]
+			ConsoleWrite("["&$i&"]"&$Attribs[$i][0] & @CRLF)
+			_SourceXML_printData($Item, $level+1)
+		EndIf
+	Next
+	;TODO
 EndFunc
 
 Func _SourceXML_createNode($oSelf, $Node)
 	#forceref $oSelf
-	If not IsOBj($NOde) then return 0
-	Local $Root
-	If $oSelf.ptr = "" then
-		$Root = $oSelf.obj
-	Else
-		$Root = $oSelf.ptr
+	If not IsOBj($NOde) then
+		ConsoleWrite("!> Не передан объект!")
+		return 0
 	EndIf
+	;Определим узел, для которого будет создавать узел
+	Local $Root
+	;Если есть точка отсчёта - всё просто
+	If $oSelf.ptr <> "" then $Root = $oSelf.ptr
+	;Если точки нет
+	If $oSelf.ptr = "" Then
+		$Root = $oSelf.obj.documentElement
+		;Если не нашли корневого элемента - корнем будет сам документ
+		If not IsObj($Root) or StringLen($Root.tagName)=0 then $Root = $oSelf.obj
+	EndIf
+	;Проверим, что удалось указать рут
+	If not IsObj($Root) Then
+		_DebugOut("!> Для создания нода не удалось определить родитея")
+		Return 0
+	EndIf
+	ConsoleWrite("+> Root is: "& $root.tagName & @CRLF)
 	;Обработаем, если нам передали инстукцию
 	If $Node.exists("ProcessingInstruction") Then
 		Local $Split = StringSPlit($Node("ProcessingInstruction")," ")
@@ -128,6 +169,10 @@ Func _SourceXML_createNode($oSelf, $Node)
 		return 1
 	EndIf
 	;Если нам передали просто узел
+	If not IsObj($oSelf.obj) Then
+		_DebugOut("!> Ошибка obj")
+		return 0
+	EndIf
 	Local $element = $oSelf.obj.createElement( $Node("tagName") )
 	If $Node.exists("text") then $element.text = $Node("text")
 	$Root.appendChild($element)
@@ -144,6 +189,7 @@ Func _SourceXML_createNode($oSelf, $Node)
 		If $keys[$i] = "tagName" or $keys[$i] = "text" then ContinueLoop
 		$element.setAttribute($keys[$i], $Node($keys[$i]) );
 	Next
+	return 1
 EndFunc
 
 Func _SourceXML_selectNode($oSelf, $Node)
@@ -155,18 +201,34 @@ Func _SourceXML_selectNode($oSelf, $Node)
 	Else
 		$Root = $oSelf.ptr
 	EndIf
-	If $Root.tagName = "" then
-		_DebugOut("!> Не удалось найти узел как точку отсчёта")
-		return 0
-	EndIf
+	If not IsObj($Root) then $Root = $oSelf.obj
+	If StringLen($Root.tagName) = 0 then $Root = $oSelf.obj
+		;_DebugOut("!> Не удалось найти узел как точку отсчёта")
+		;return 0
+	;EndIf
 	;
+	ConsoleWrite("RootNode: "& $Root.tagName & @CRLF)
 	Local $Selected = $Root.selectSingleNode($Node)
 	If not isObj($Selected) Then
-		_DebugOut("!> Не удалось выбрать узел")
+		_DebugOut("!> Не удалось выбрать узел '"& $Node &"'")
 		return 0
 	EndIf
 	$oSelf.ptr = $Selected
 	return $Selected
+EndFunc
+
+Func _SourceXML_deleteNode($oSelf)
+	#forceref $oSelf
+	If $oSelf.ptr = "" then
+		_DebugOut("!> Не выбран узел ($obj.selectNode)")
+		return 0
+	EndIf
+	local $Parent = $oSelf.ptr.parentNode
+	msgbox(0,"test", $Parent.tagName)
+	$Parent.removeChild($oSelf.ptr)
+	$oSelf.ptr = $Parent
+	$oSelf.save()
+	return 1
 EndFunc
 
 Func _SourceXML_setParam($oSelf, $Param, $Value)
@@ -176,5 +238,6 @@ Func _SourceXML_setParam($oSelf, $Param, $Value)
 		return 0
 	EndIf
 	$oSelf.ptr.setAttribute($Param, $Value)
+	$oSelf.save()
 	return 1
 EndFunc
