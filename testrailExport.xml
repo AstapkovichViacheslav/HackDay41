@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<milestone>
+	<id>M1</id>
+	<name>Версия 3.0</name>
+	<description></description>
+		<completed>false</completed>
+		<stats>
+										<passed>
+			<percent>100</percent>
+			<count>7</count>
+		</passed>
+											<blocked>
+			<percent>0</percent>
+			<count>0</count>
+		</blocked>
+											<untested>
+			<percent>0</percent>
+			<count>0</count>
+		</untested>
+											<retest>
+			<percent>0</percent>
+			<count>0</count>
+		</retest>
+											<failed>
+			<percent>0</percent>
+			<count>0</count>
+		</failed>
+																																																				</stats>	<runs>
+						<plan>
+	<id>R1</id>
+	<name>Подготовка в к отправке версии 3.0</name>
+	<description></description>
+	<createdon>2016-03-26T09:46:09Z</createdon>
+		<completed>false</completed>
+		<milestone>Версия 3.0</milestone>
+	<stats>
+										<passed>
+			<percent>100</percent>
+			<count>7</count>
+		</passed>
+											<blocked>
+			<percent>0</percent>
+			<count>0</count>
+		</blocked>
+											<untested>
+			<percent>0</percent>
+			<count>0</count>
+		</untested>
+											<retest>
+			<percent>0</percent>
+			<count>0</count>
+		</retest>
+											<failed>
+			<percent>0</percent>
+			<count>0</count>
+		</failed>
+																																																				</stats>	<runs>
+			<run>
+	<id>R2</id>
+	<name>Версия 1.0</name>
+	<description></description>
+	<config></config>
+	<createdon>2016-03-26T11:19:13Z</createdon>
+		<completed>false</completed>
+		<milestone>Версия 3.0</milestone>
+	<stats>
+										<passed>
+			<percent>100</percent>
+			<count>7</count>
+		</passed>
+											<blocked>
+			<percent>0</percent>
+			<count>0</count>
+		</blocked>
+											<untested>
+			<percent>0</percent>
+			<count>0</count>
+		</untested>
+											<retest>
+			<percent>0</percent>
+			<count>0</count>
+		</retest>
+											<failed>
+			<percent>0</percent>
+			<count>0</count>
+		</failed>
+																																																				</stats>	<sections>
+		<section>
+		<name>1111 - Вход в систему</name>
+		<description>Реализована авторизация в системе.</description>
+						<tests>
+																																										<test>
+				<id>T1</id>
+				<title>Переход на страницу</title>
+												<template>Test Case (Text)</template>
+																<type>Other</type>
+																<priority>Medium</priority>
+																<estimate></estimate>
+																								<references></references>
+																				<custom>
+										<preconds>Реализован вход в систему</preconds>
+										<steps_separeted><step>
+<index>1</index><content>Включить компьютер</content></step>
+<step>
+<index>2</index><content>Открыть браузер Google Chrome</content></step>
+<step>
+<index>3</index><content>Еcли у вас нет браузера Google Chrome используйте программу для скачивания  Google Chrome (программа с синенькой буквой Е).</content></step>
+<step>
+<index>4</index><content>Вводим в адресную строку ссылку  https://autopimhackday.testrail.net/index.php?/dashboard</content></step>
+<step>
+<index>5</index><content>Жмем большую кнопку с угловой стрелкой.</content></step>
+</steps_separeted>
+										<expected>При входе по URL ошибок нет.</expected>
+									</custom>
+												<caseid>C1</caseid>
+								<status>Passed</status>
+								<assignedto></assignedto>
+												<inprogress></inprogress>
+																																										<elapsed>3</elapsed>
+																																																						<changes>
+															<change>
+						<createdon>2016-03-26T11:19:30Z</createdon>
+																		<createdby>Zaur</createdby>
+												<status>Passed</status>
+												<assignedto></assignedto>
+												<comment></comment>
+																		<version></version>
+																														<elapsed>3</elapsed>
+																														<defects></defects>
+																													</change>
+									</changes>
+			</test>
+																																													<test>
+				<id>T2</id>
+				<title>Вход в систему</title>
+												<template>Test Case (Text)</template>
+																<type>Other</type>
+																<priority>Medium</priority>
+																<estimate></estimate>
+																								<references></references>
+																				<custom>
+										<steps_separeted><step>
+<index>1</index><content>В поле &quot;Email address&quot; указать email  зарегистрированный в системе.</content></step>
+<step>
+<index>2</index><content>В поле &quot;Password&quot; ввести корректный пароль.</content></step>
+<step>
+<index>3</index><content>Нажать на кнопку &quot;Login&quot;.</content></step>
+</steps_separeted>
+										<expected>При входе в систему ошибок нет.</expected>
+									</custom>
+												<caseid>C2</caseid>
+								<status>Passed</status>
+								<assignedto></assignedto>
+												<inprogress></inprogress>
+																																										<elapsed>3</elapsed>
+																																																						<changes>
+															<change>
+						<createdon>2016-03-26T11:19:38Z</createdon>
+																		<createdby>Zaur</createdby>
+												<status>Passed</status>
+												<assignedto></assignedto>
+												<comment></comment>
+																		<version></version>
+																														<elapsed>3</elapsed>
+																														<defects></defects>
+																													</change>
+									</changes>
+			</test>
+								</tests>
+							</section>
+		<section>
+		<name>1112 - Изменение личных настроек</name>
+		<description>Реализована возможность изменения параметров учетной записи.</description>
+						<tests>
+																																										<test>
+				<id>T3</id>
+				<title>Переход на страницу настроек</title>
+												<template>Test Case (Text)</template>
+																<type>Other</type>
+																<priority>Medium</priority>
+																<estimate></estimate>
+																								<references></references>
+																				<custom>
+										<steps_separeted><step>
+<index>1</index><content>На панели инструментов раскрыть выпадающий список своей учетной записи.</content></step>
+<step>
+<index>2</index><content>Выбрать My Settings</content></step>
+<step>
+<index>3</index><content>Дождаться загрузки страницы настроек</content></step>
+</steps_separeted>
+										<expected>Страница настроек загружена.</expected>
+									</custom>
+												<caseid>C3</caseid>
+								<status>Passed</status>
+								<assignedto></assignedto>
+												<inprogress></inprogress>
+																																										<elapsed>4</elapsed>
+																																																						<changes>
+															<change>
+						<createdon>2016-03-26T11:19:46Z</createdon>
+																		<createdby>Zaur</createdby>
+												<status>Passed</status>
+												<assignedto></assignedto>
+												<comment></comment>
+																		<version></version>
+																														<elapsed>4</elapsed>
+																														<defects></defects>
+																													</change>
+									</changes>
+			</test>
+																																													<test>
+				<id>T4</id>
+				<title>Изменение личных настроек</title>
+												<template>Test Case (Text)</template>
+																<type>Other</type>
+																<priority>Medium</priority>
+																<estimate></estimate>
+																								<references></references>
+																				<custom>
+										<steps_separeted><step>
+<index>1</index><content>Заполнить поле &quot;Full Name&quot;.</content></step>
+<step>
+<index>2</index><content>Заполнить поле &quot;Email Address&quot;.
+</content></step>
+<step>
+<index>3</index><content>Выбрать язык в поле &quot;Language&quot;.</content></step>
+<step>
+<index>4</index><content>Выбрать местоположение в поле &quot;Locale&quot;.</content></step>
+<step>
+<index>5</index><content>Выбрать временную зону в поле &quot;Time Zone&quot;</content></step>
+<step>
+<index>6</index><content>При необходимости изменить пароль.</content></step>
+</steps_separeted>
+										<expected>При изменении параметров учетной записи ошибок нет.</expected>
+									</custom>
+												<caseid>C4</caseid>
+								<status>Passed</status>
+								<assignedto></assignedto>
+												<inprogress></inprogress>
+																																																																																						<changes>
+															<change>
+						<createdon>2016-03-26T11:20:51Z</createdon>
+																		<createdby>Zaur</createdby>
+												<status>Passed</status>
+												<assignedto></assignedto>
+												<comment></comment>
+																		<version></version>
+																														<elapsed></elapsed>
+																														<defects></defects>
+																													</change>
+									</changes>
+			</test>
+																																													<test>
+				<id>T5</id>
+				<title>Сохранение параметров настроек</title>
+												<template>Test Case (Text)</template>
+																<type>Other</type>
+																<priority>Medium</priority>
+																<estimate></estimate>
+																								<references></references>
+																				<custom>
+										<steps_separeted><step>
+<index>1</index><content>Заполнить обязательные поля на странице &quot;My Settings&quot;.</content></step>
+<step>
+<index>2</index><content>Выбрать &quot;Save Settings&quot;.</content></step>
+</steps_separeted>
+										<expected>При сохранении изменений ошибок нет.</expected>
+									</custom>
+												<caseid>C5</caseid>
+								<status>Passed</status>
+								<assignedto></assignedto>
+												<inprogress></inprogress>
+																																										<elapsed>1</elapsed>
+																																																						<changes>
+															<change>
+						<createdon>2016-03-26T11:20:57Z</createdon>
+																		<createdby>Zaur</createdby>
+												<status>Passed</status>
+												<assignedto></assignedto>
+												<comment></comment>
+																		<version></version>
+																														<elapsed>1</elapsed>
+																														<defects></defects>
+																													</change>
+									</changes>
+			</test>
+								</tests>
+							</section>
+		<section>
+		<name>Создание нового проекта</name>
+		<description>Реализована возможность создания нового проекта</description>
+						<tests>
+																																										<test>
+				<id>T6</id>
+				<title>Создание нового проекта</title>
+												<template>Test Case (Text)</template>
+																<type>Other</type>
+																<priority>Medium</priority>
+																<estimate></estimate>
+																								<references></references>
+																				<custom>
+										<steps_separeted><step>
+<index>1</index><content>Перейти на страницу Dashboard.</content></step>
+<step>
+<index>2</index><content>Выбрать &quot;Add Project&quot;.</content></step>
+<step>
+<index>3</index><content>На странице создания нового проекта заполнить поле &quot;Name	&quot;.</content></step>
+<step>
+<index>4</index><content>Заполнить при необходимости другие поля.</content></step>
+<step>
+<index>5</index><content>Выбрать &quot;Add Project&quot;.</content></step>
+</steps_separeted>
+										<expected>При добавлении проекта ошибок нет.</expected>
+									</custom>
+												<caseid>C6</caseid>
+								<status>Passed</status>
+								<assignedto></assignedto>
+												<inprogress></inprogress>
+																																										<elapsed>2</elapsed>
+																																																						<changes>
+															<change>
+						<createdon>2016-03-26T11:21:04Z</createdon>
+																		<createdby>Zaur</createdby>
+												<status>Passed</status>
+												<assignedto></assignedto>
+												<comment></comment>
+																		<version></version>
+																														<elapsed>2</elapsed>
+																														<defects></defects>
+																													</change>
+									</changes>
+			</test>
+																																													<test>
+				<id>T7</id>
+				<title>Переход в созданный проект</title>
+												<template>Test Case (Text)</template>
+																<type>Other</type>
+																<priority>Medium</priority>
+																<estimate></estimate>
+																								<references></references>
+																								<caseid>C7</caseid>
+								<status>Passed</status>
+								<assignedto></assignedto>
+												<inprogress></inprogress>
+																																										<elapsed>5</elapsed>
+																																																						<changes>
+															<change>
+						<createdon>2016-03-26T11:21:22Z</createdon>
+																		<createdby>Zaur</createdby>
+												<status>Passed</status>
+												<assignedto></assignedto>
+												<comment></comment>
+																		<version></version>
+																														<elapsed>5</elapsed>
+																														<defects></defects>
+																													</change>
+									</changes>
+			</test>
+								</tests>
+							</section>
+</sections>
+</run>		</runs>
+</plan>
+				</runs>
+</milestone>

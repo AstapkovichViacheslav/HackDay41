@@ -164,6 +164,7 @@ Func _Source_selectData($oSelf, $XPath, $dataArray="")
 		EndIf
 		;ConsoleWrite($cTag & @TAB & UBound($params) & @TAB & IsArray($params) & @CRLF)
 		;Если это корневой элемент - идём дальше
+		If not IsArray($Data) then ContinueLoop
 		If $i=1 and $cTag = $Data[0][1] and not IsArray($params) then
 			ContinueLoop
 		EndIf
