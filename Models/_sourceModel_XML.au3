@@ -10,13 +10,17 @@ Func _Source_XML()
 
         .AddMethod("create", 	"_SourceXML_create")
 		.AddMethod("open", 		"_SourceXML_open")
+		.AddMethod("save", 		"_SourceXML_save")
 		.AddMethod("isReady",	"_SourceXML_isReady")
-		;.AddMethod("createNode","_Source_createNode")
-		;.AddMethod("selectNode","_Source_selectNode")
 		.AddMethod("getData",	"_SourceXML_getData");
+
+		.AddMethod("createNode","_SourceXML_createNode")
+		.AddMethod("selectNode","_SourceXML_selectNode")
+		.AddMethod("setParam",	"_SourceXML_setParam")
 
         .AddProperty("obj", $ELSCOPE_PRIVATE, ObjCreate("Microsoft.XMLDOM") )
 		.AddProperty("src", $ELSCOPE_PRIVATE, "")
+		.AddProperty("ptr", $ELSCOPE_PRIVATE, "")
     EndWith
 	return $oClass.Object
 EndFunc
@@ -41,6 +45,12 @@ EndFunc
 
 ;Указать модель работы с данными
 Func _SourceXML_create($oSelf)
+	#forceref $oSelf
+	return $oSelf.save()
+EndFunc
+
+;сохранить изменения
+Func _SourceXML_save($oSelf)
 	#forceref $oSelf
 	Local $code = $oSelf.obj.save($oSelf.src)
 	return FileExists($oSelf.src)
@@ -96,4 +106,75 @@ Func _SourceXML_getData($oSelf, $oNode="")
 	Next
 	;Возвращаем собранный массив
 	return $Attribs
+EndFunc
+
+Func _SourceXML_createNode($oSelf, $Node)
+	#forceref $oSelf
+	If not IsOBj($NOde) then return 0
+	Local $Root
+	If $oSelf.ptr = "" then
+		$Root = $oSelf.obj
+	Else
+		$Root = $oSelf.ptr
+	EndIf
+	;Обработаем, если нам передали инстукцию
+	If $Node.exists("ProcessingInstruction") Then
+		Local $Split = StringSPlit($Node("ProcessingInstruction")," ")
+		If not IsArray($Split) then return 0
+		If UBound($Split) <> 3 Then return 0
+		Local $Instr = $oSelf.obj.createProcessingInstruction( $Split[1],$Split[2])
+		$oSelf.obj.insertBefore($Instr,$oSelf.obj.childNodes(1))
+		_DebugOut("+> Добавлен инструкция '"& $Node("ProcessingInstruction") &"'")
+		return 1
+	EndIf
+	;Если нам передали просто узел
+	Local $element = $oSelf.obj.createElement( $Node("tagName") )
+	If $Node.exists("text") then $element.text = $Node("text")
+	$Root.appendChild($element)
+	;Если создаётся корневой узел - создаём XML инструкцию
+	If $oSelf.ptr = "" then
+		Local $Instr = $oSelf.obj.createProcessingInstruction("xml","version='1.0'")
+		$oSelf.obj.insertBefore($Instr,$oSelf.obj.childNodes(0))
+	EndIf
+	;Сместим указатель на новый элемент
+	$oSelf.ptr = $Element
+	;Добавим атрибуты, если надо
+	Local $keys = $Node.keys
+	For $i=0 to UBound($keys)-1
+		If $keys[$i] = "tagName" or $keys[$i] = "text" then ContinueLoop
+		$element.setAttribute($keys[$i], $Node($keys[$i]) );
+	Next
+EndFunc
+
+Func _SourceXML_selectNode($oSelf, $Node)
+	#forceref $oSelf
+	If $Node="" then return 0
+	Local $Root
+	If $oSelf.ptr = "" then
+		$Root = $oSelf.obj.documentElement
+	Else
+		$Root = $oSelf.ptr
+	EndIf
+	If $Root.tagName = "" then
+		_DebugOut("!> Не удалось найти узел как точку отсчёта")
+		return 0
+	EndIf
+	;
+	Local $Selected = $Root.selectSingleNode($Node)
+	If not isObj($Selected) Then
+		_DebugOut("!> Не удалось выбрать узел")
+		return 0
+	EndIf
+	$oSelf.ptr = $Selected
+	return $Selected
+EndFunc
+
+Func _SourceXML_setParam($oSelf, $Param, $Value)
+	#forceref $oSelf
+	If $oSelf.ptr = "" then
+		_DebugOut("!> Не выбран узел ($obj.selectNode)")
+		return 0
+	EndIf
+	$oSelf.ptr.setAttribute($Param, $Value)
+	return 1
 EndFunc

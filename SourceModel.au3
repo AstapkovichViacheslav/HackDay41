@@ -25,18 +25,30 @@ Func _Source($SourcePath="")
         .AddMethod("setModel", 	"_Source_setModel")		;Указать библиотеку модели (XML, TXT и т.п.)
         .AddMethod("create", 	"_Source_create")		;Создать источник
 		.AddMethod("open", 		"_Source_open")			;Открыть источник
+		.AddMethod("save", 		"_Source_save")			;Сохранить изменеия в источнике
 		.AddMethod("isReady",	"_Source_isReady")		;Готов ли источник к работе
-		.AddMethod("getData",	"_Source_getData")
-		.AddMethod("select",	"_Source_selectData")
+		.AddMethod("getData",	"_Source_getData")		;Получить данные источника
+		.AddMethod("select",	"_Source_selectData")	;Выбрать в данных источника узел
+		.AddMethod("element",	"_Source_createElement");Создаь элемен
 
-		.AddMethod("createNode","_Source_createNode")
-		.AddMethod("selectNode","_Source_selectNode")
+
+		.AddMethod("createNode","_Source_createNode")	;Создание узла
+		.AddMethod("selectNode","_Source_selectNode")	;Выбор узла (переход в узел)
+		.AddMethod("setParam",	"_Source_setParam")		;Указать атрибуты/параметры узла
 
 		.AddProperty("src", 	$ELSCOPE_PRIVATE, $SourcePath)
         .AddProperty("model", 	$ELSCOPE_PRIVATE, null)
     EndWith
 	_DebugOut("+> Создан объект Source")
 	return $oClass.Object
+EndFunc
+
+;https://msdn.microsoft.com/en-us/library/x4k5wbx4(v=vs.84).aspx
+Func _Source_createElement($oSelf, $tagName, $tag = "tagName")
+	#forceref $oSelf
+	Local $Element = ObjCreate("Scripting.Dictionary")
+	$Element.add($tag, $tagName)
+	return $Element
 EndFunc
 
 ;Указать путь к источнику
@@ -84,6 +96,25 @@ Func _Source_create($oSelf)
 	EndIf
 	Local $Ret = $oSelf.model.create()
 	_DebugOut("+> Создан источник: "&$Ret)
+	return $Ret
+EndFunc
+
+;Сохранить изменения в источнике
+Func _Source_save($oSelf)
+	#forceref $oSelf
+	If $oSelf.src = "" Then
+		_DebugOut("!> Для сохранения не указан путь!")
+		Return
+	EndIf
+	If not IsObj($oSelf.model) Then
+		_DebugOut("!> Для работы с данными не указана модель!")
+		return
+	EndIf
+	If $oSelf.model.getSrc() = "" Then
+		$oSelf.model.setSrc($oSelf.src)
+	EndIf
+	Local $Ret = $oSelf.model.save()
+	_DebugOut("+> Изменения данных сохранены: "&$Ret)
 	return $Ret
 EndFunc
 
@@ -183,18 +214,98 @@ Func _Source_selectData($oSelf, $XPath, $dataArray="")
 	return $Data
 EndFunc
 
+Func _Source_createNode($oSelf, $Node)
+	#forceref $oSelf
+	If not IsObj($oSelf.model) Then
+		_DebugOut("!> Для работы с данными не указана модель!")
+		return
+	EndIf
+	If not IsObj($Node) Then
+		_DebugOut("!> Для работы с данными не передан src.element!")
+		return
+	EndIf
+	If ObjName($Node) <> "Dictionary" Then
+		_DebugOut("!> Для работы с данными передан некорректный объект!")
+		return
+	EndIf
+	If not $oSelf.model.isReady Then
+		_DebugOut("!> Источник данных не готов!")
+		Return
+	EndIf
+	Local $code = $oSelf.model.createNode($Node)
+	_DebugOut("+> Создание узла:"& IsArray($code) )
+	return $code
+EndFunc
 
-Local $src = _Source()			;Создаю ресурс
-$src.setSrc("C:\pim.xml")		;Указываю путь
-$src.setModel( _Source_XML() )	;Указываю способ обработки
-;$src.create()
-$src.open()						;Открываю источник
-Local $PIM = $src.getData()		;Получаю данные
-;Ищу строку без параметров
-Local $String = "w:wordDocument/o:DocumentProperties/o:Title"
-Local $Node = $src.select($String,$PIM)
-ConsoleWrite("1 test: "& $Node[1][1] & @CRLF)
-;Ищу строку с параметром
-Local $String = "w:wordDocument/w:styles/w:style[@w:styleId='2']/wx:uiName"
-Local $Node = $src.select($String,$PIM)
-ConsoleWrite("2 test: "& $Node[2][1] & @CRLF)
+Func _Source_selectNode($oSelf, $Path)
+	#forceref $oSelf
+	If not IsObj($oSelf.model) Then
+		_DebugOut("!> Для работы с данными не указана модель!")
+		return
+	EndIf
+	Local $code = $oSelf.model.selectNode($Path)
+	_DebugOut("+> Выбор узла '"& $Path &"':"& IsObj($code) )
+	return $code
+EndFunc
+
+Func _Source_setParam($oSelf, $Param, $Value)
+	#forceref $oSelf
+	If not IsObj($oSelf.model) Then
+		_DebugOut("!> Для работы с данными не указана модель!")
+		return
+	EndIf
+	Local $code = $oSelf.model.setParam($Param, $Value)
+	_DebugOut("+> Изменение параметра '"& $Param &"'" )
+	return $code
+EndFunc
+
+
+
+
+
+
+
+WriteTest()
+
+
+Func WriteTest()
+	Local $src = _Source()			;Создаю ресурс
+	$src.setSrc("C:\test.xml")		;Указываю путь
+	$src.setModel( _Source_XML() )	;Указываю способ обработки
+	$src.create()
+	$src.open()
+	Local $Node = $src.element("test1")
+	$Node.add("param1","pval1")
+	$Node.add("param2","pval2")
+	$src.createNode($Node)
+	Local $Node = $src.element("test2")
+	$src.createNode($Node)
+	$src.selectNode("..")
+	Local $Node = $src.element("test3")
+	$src.createNode($Node)
+	$src.setParam("param2","pval2-2")
+
+	Local $Instr =$src.element("test tst='f'","ProcessingInstruction")
+	$src.createNode($Instr)
+
+
+
+
+	$src.save()
+EndFunc
+
+Func ReadTest()
+	Local $src = _Source()			;Создаю ресурс
+	$src.setSrc("C:\pim.xml")		;Указываю путь
+	$src.setModel( _Source_XML() )	;Указываю способ обработки
+	$src.open()						;Открываю источник
+	Local $PIM = $src.getData()		;Получаю данные
+	;Ищу строку без параметров
+	Local $String = "w:wordDocument/o:DocumentProperties/o:Title"
+	Local $Node = $src.select($String,$PIM)
+	ConsoleWrite("1 test: "& $Node[1][1] & @CRLF)
+	;Ищу строку с параметром
+	Local $String = "w:wordDocument/w:styles/w:style[@w:styleId='2']/wx:uiName"
+	Local $Node = $src.select($String,$PIM)
+	ConsoleWrite("2 test: "& $Node[2][1] & @CRLF)
+EndFunc

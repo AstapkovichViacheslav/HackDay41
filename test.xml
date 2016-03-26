@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<?test tst='f'?>
+<test1 param1="pval1" param2="pval2"><test2/><test3 param2="pval2-2"/></test1>
