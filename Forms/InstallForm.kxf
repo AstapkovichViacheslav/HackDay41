@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<object type="TAForm" name="InstallForm">
+	<properties>
+		<property name="Left" vt="Int16">413</property>
+		<property name="Top" vt="Int16">190</property>
+		<property name="Width" vt="Int16">516</property>
+		<property name="Height" vt="Int16">316</property>
+		<property name="Caption" vt="UTF8String">Установка  АвтоПИМ</property>
+		<property name="Color" vt="Ident">clBtnFace</property>
+		<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+		<property name="Font.Color" vt="Ident">clWindowText</property>
+		<property name="Font.Height" vt="Int8">-11</property>
+		<property name="Font.Name" vt="String">MS Sans Serif</property>
+		<property name="Font.Style" vt="Set"/>
+		<property name="OldCreateOrder" vt="False">False</property>
+		<property name="Visible" vt="True">True</property>
+		<property name="Style" vt="Int32">-1798701056</property>
+		<property name="ExStyle" vt="Int16">256</property>
+		<property name="Version" vt="String">1.04</property>
+		<property name="FormOptOnEvent" vt="False">False</property>
+		<property name="FormOptExpVars" vt="False">False</property>
+		<property name="FormOptPopulate" vt="False">False</property>
+		<property name="FormOptVarsForSet" vt="False">False</property>
+		<property name="FormOptIndentChar" vt="Int8">0</property>
+		<property name="FormOptIndentCount" vt="Int8">1</property>
+		<property name="FormOptIndentInit" vt="Int8">0</property>
+		<property name="FormOptVarScope" vt="Int8">0</property>
+		<property name="Resizing" vt="Set"/>
+		<property name="PixelsPerInch" vt="Int8">96</property>
+		<property name="TextHeight" vt="Int8">13</property>
+	</properties>
+	<components>
+		<object type="TAPic" name="Logo">
+			<properties>
+				<property name="Left" vt="Int8">0</property>
+				<property name="Top" vt="Int8">0</property>
+				<property name="Width" vt="Int16">500</property>
+				<property name="Height" vt="Int8">85</property>
+				<property name="CtrlStyle" vt="Int32">1342308622</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="PicturePath" vt="UTF8String">D:\WORK\сommercical\HackDay41\Images\АвтоПИМ.jpg</property>
+				<property name="TabOrder" vt="Int8">0</property>
+				<property name="Resizing" vt="Set">DockWidth, DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAButton" name="NextButton">
+			<properties>
+				<property name="Left" vt="Int16">368</property>
+				<property name="Top" vt="Int16">248</property>
+				<property name="Width" vt="Int8">123</property>
+				<property name="Height" vt="Int8">25</property>
+				<property name="Caption" vt="WString">Далее</property>
+				<property name="TabOrder" vt="Int8">1</property>
+				<property name="Color" vt="Ident">clBtnFace</property>
+				<property name="CtrlStyle" vt="Int32">1342373888</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set">DockWidth, DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAEdit" name="Text">
+			<properties>
+				<property name="Left" vt="Int8">24</property>
+				<property name="Top" vt="Int8">96</property>
+				<property name="Width" vt="Int16">449</property>
+				<property name="Height" vt="Int16">129</property>
+				<property name="Color" vt="Ident">clBtnFace</property>
+				<property name="Lines.Strings" vt="List">
+					<list>
+						<li vt="UTF8String">Вас приветствует инсталлятор программы АвтоПИМ</li>
+						<li vt="String"/>
+						<li vt="UTF8String">АвтоПИМ упрощает процесс сборки документации из сторонних систем хранения.</li>
+						<li vt="UTF8String">Позволяет гибко настраивать шаблоны и фильтры для создания документации.</li>
+						<li vt="String"/>
+						<li vt="UTF8String">В процессе установки программа АвтоПИМ проверит ранее установленные версии. </li>
+						<li vt="UTF8String">При наличии раннее установленных версий выполнит обновление. </li>
+						<li vt="String"/>
+						<li vt="UTF8String">Для продолжения  установки нажмите кнопку &quot;Далее&quot;</li>
+					</list>
+				</property>
+				<property name="TabOrder" vt="Int8">2</property>
+				<property name="CtrlStyle" vt="Int32">1342380036</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set"/>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAInput" name="O_Input">
+			<properties>
+				<property name="Left" vt="Int8">120</property>
+				<property name="Top" vt="Int16">210</property>
+				<property name="Width" vt="Int8">121</property>
+				<property name="Height" vt="Int8">21</property>
+				<property name="TabOrder" vt="Int8">3</property>
+				<property name="Visible" vt="False">False</property>
+				<property name="CtrlStyle" vt="Int32">1342374016</property>
+				<property name="CtrlExStyle" vt="Int16">512</property>
+				<property name="Resizing" vt="Set">DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TALabel" name="F_Label">
+			<properties>
+				<property name="Left" vt="Int8">60</property>
+				<property name="Top" vt="Int16">153</property>
+				<property name="Width" vt="Int8">53</property>
+				<property name="Height" vt="Int8">17</property>
+				<property name="Caption" vt="WString">Фамилия</property>
+				<property name="TabOrder" vt="Int8">4</property>
+				<property name="Visible" vt="False">False</property>
+				<property name="HaveVariable" vt="False">False</property>
+				<property name="CtrlStyle" vt="Int32">1342308608</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set"/>
+			</properties>
+			<components/>
+		</object>
+		<object type="TALabel" name="I_Label">
+			<properties>
+				<property name="Left" vt="Int8">85</property>
+				<property name="Top" vt="Int16">183</property>
+				<property name="Width" vt="Int8">26</property>
+				<property name="Height" vt="Int8">17</property>
+				<property name="Caption" vt="WString">Имя</property>
+				<property name="TabOrder" vt="Int8">5</property>
+				<property name="Visible" vt="False">False</property>
+				<property name="HaveVariable" vt="False">False</property>
+				<property name="CtrlStyle" vt="Int32">1342308608</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set"/>
+			</properties>
+			<components/>
+		</object>
+		<object type="TALabel" name="O_Label">
+			<properties>
+				<property name="Left" vt="Int8">62</property>
+				<property name="Top" vt="Int16">213</property>
+				<property name="Width" vt="Int8">51</property>
+				<property name="Height" vt="Int8">17</property>
+				<property name="Caption" vt="WString">Отчество</property>
+				<property name="TabOrder" vt="Int8">6</property>
+				<property name="Visible" vt="False">False</property>
+				<property name="HaveVariable" vt="False">False</property>
+				<property name="CtrlStyle" vt="Int32">1342308608</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set"/>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAInput" name="F_Input">
+			<properties>
+				<property name="Left" vt="Int8">120</property>
+				<property name="Top" vt="Int16">150</property>
+				<property name="Width" vt="Int8">121</property>
+				<property name="Height" vt="Int8">21</property>
+				<property name="TabOrder" vt="Int8">7</property>
+				<property name="Visible" vt="False">False</property>
+				<property name="CtrlStyle" vt="Int32">1342374016</property>
+				<property name="CtrlExStyle" vt="Int16">512</property>
+				<property name="Resizing" vt="Set">DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAInput" name="I_Input">
+			<properties>
+				<property name="Left" vt="Int8">120</property>
+				<property name="Top" vt="Int16">180</property>
+				<property name="Width" vt="Int8">121</property>
+				<property name="Height" vt="Int8">21</property>
+				<property name="TabOrder" vt="Int8">8</property>
+				<property name="Visible" vt="False">False</property>
+				<property name="CtrlStyle" vt="Int32">1342374016</property>
+				<property name="CtrlExStyle" vt="Int16">512</property>
+				<property name="Resizing" vt="Set">DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAInput" name="Org_Input">
+			<properties>
+				<property name="Left" vt="Int8">120</property>
+				<property name="Top" vt="Int8">120</property>
+				<property name="Width" vt="Int16">250</property>
+				<property name="Height" vt="Int8">21</property>
+				<property name="TabOrder" vt="Int8">9</property>
+				<property name="Visible" vt="False">False</property>
+				<property name="CtrlStyle" vt="Int32">1342374016</property>
+				<property name="CtrlExStyle" vt="Int16">512</property>
+				<property name="Resizing" vt="Set">DockHeight</property>
+			</properties>
+			<components/>
+		</object>
+		<object type="TALabel" name="Org_Label">
+			<properties>
+				<property name="Left" vt="Int8">43</property>
+				<property name="Top" vt="Int8">122</property>
+				<property name="Width" vt="Int8">71</property>
+				<property name="Height" vt="Int8">17</property>
+				<property name="Caption" vt="WString">Организация</property>
+				<property name="TabOrder" vt="Int8">10</property>
+				<property name="Visible" vt="False">False</property>
+				<property name="HaveVariable" vt="False">False</property>
+				<property name="CtrlStyle" vt="Int32">1342308608</property>
+				<property name="CtrlExStyle" vt="Int8">0</property>
+				<property name="Resizing" vt="Set"/>
+			</properties>
+			<components/>
+		</object>
+	</components>
+</object>
