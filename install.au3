@@ -110,6 +110,8 @@ Func Install()
 						$installStep = $installStep + 1
 						SetUserInfo(False)
 						deletePreviouslyInstalled()
+						CreateMenuItem("*", "[АвтоПИМ] Обработать файл")
+						InstallToPF()
 						GUICtrlSetData($Steps_Label, StringFormat("Шаг 3: Завершение установки"))
 					Case Else
 
@@ -132,9 +134,10 @@ Func findPreviouslyInstalled()
 		If RegRead($Key, "MUIVerb") <> "" Then
 			_ArrayAdd($arrRegDelete, $Key)
 			local $path = RegRead($Key&"\command", "")
+
 			; Если мы нашли путь то сохраним его
 			if $path <> "" Then
-				$path = StringLeft($path, StringInStr($path, "AutoPIM.exe") - 2)
+				$path = StringLeft($path, StringInStr($path, "AutoPIM") + StringLen("AutoPIM") - 1)
 				if FileExists($path) Then
 					if _ArraySearch($arrDirDelete, $path) = -1 Then
 						_ArrayAdd($arrDirDelete, $path)
@@ -170,13 +173,19 @@ Func findPreviouslyInstalled()
 	return $message
 EndFunc
 
-Func CreateMenuItem($GroupName)
-	Local $Type = "xml"
-	Local $Key = "HKEY_CLASSES_ROOT\."&$Type&"\Shell\"&@ScriptName
+Func CreateMenuItem($Type, $GroupName)
+	Local $Key = "HKEY_CLASSES_ROOT\"&$Type&"\Shell\AutoPIM"
 	RegWrite($key)
 	RegWrite($key,"MUIVerb","REG_SZ",$GroupName)
-	RegWrite($key,"SubCommands","REG_SZ",$GroupName&"1" &";"& $Groupname&"2")
+	RegWrite($key & "\command", "", "REG_SZ", @ProgramFilesDir & "\AutoPIM\AutoPIM.exe")
+
+	;Для подкоманд
+	;RegWrite($key,"SubCommands","REG_SZ",$GroupName&"1" &";"& $Groupname&"2")
 	;http://rapidsoft.org/articles/wintuning/item/101-context_menu_section
+EndFunc
+
+Func InstallToPF()
+	FileCopy ( ".\main.exe", @ProgramFilesDir & "\AutoPIM\", $FC_CREATEPATH)
 EndFunc
 
 Func deletePreviouslyInstalled()
@@ -199,7 +208,12 @@ Func deletePreviouslyInstalled()
 	For $dir in $arrDirDelete
 		$result = FileDelete($dir)
 		If $result <> 1 Then
-			MsgBox($MB_ICONERROR, "Ошибка удаления каталога", "Ошибка удаления папки:" & @LF & $dir)
+			MsgBox($MB_ICONERROR, "Ошибка удаления файлов каталога", "Ошибка удаления файлов:" & @LF & $dir)
+		EndIf
+
+		$result = DirRemove($dir)
+		If $result <> 1 Then
+			MsgBox($MB_ICONERROR, "Ошибка удаления каталога", "Ошибка удаления каталога:" & @LF & $dir)
 		EndIf
 	Next
 EndFunc
