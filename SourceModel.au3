@@ -2,26 +2,10 @@
 
 
 #ce
-#RequireAdmin
-#include-once
-#include <Debug.au3>
-#include <AutoItObject.au3>
-#include ".\Models\_sourceModel_XML.au3"
-_DebugSetup("DEBUG",true,2)
-Opt("MustDeclareVars", 1)
-
-If @Compiled Then
-	msgbox(0,"1","1")
-	Exit
-EndIf
 
 
-Global $oError = ObjEvent("AutoIt.Error", "_ErrFunc")
-_AutoItObject_StartUp()
 
-Func _ErrFunc()
-	;ConsoleWrite("!> ERR = "& $oError.description & @CRLF)
-EndFunc
+
 
 Func _Source($SourcePath="")
     Local $oClass = _AutoItObject_Class()
@@ -264,41 +248,6 @@ Func _Source_setParam($oSelf, $Param, $Value)
 	_DebugOut("+> Изменение параметра '"& $Param &"'" )
 	return $code
 EndFunc
-
-
-
-
-Local $Name = "Test1"
-
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name) & @CRLF)
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name&"\tes") & @CRLF)
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name&"\shell") & @CRLF)
-
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name&"\shell\Command") & @CRLF)
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name&"\shell\Command","","REG_SZ","""C:\WORK\HackDay41\SourceModel.exe""") & @CRLF)
-
-
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name&"\shell\open") & @CRLF)
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name&"\shell\open\shell") & @CRLF)
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name&"\shell\open\shell\Command") & @CRLF)
-ConsoleWrite(RegWrite("HKEY_CLASSES_ROOT\.xml\"&$Name&"\shell\open\shell\Command","","REG_SZ","""C:\WORK\HackDay41\SourceModel.exe""") & @CRLF)
-#cs
-"shell"
-
-4) В подразделе "shell" создаём ещё один раздел, но уже с названием "Open" (после создания раздела "Open" у файлов с расширением .OSzone появится пункт "Открыть", который и будет пунктом по умолчанию).
-
-5) В разделе "Open" создаём ещё один подраздел, с названием "shell" и подраздел в подразделе "shell" с названием "command" (в общем, всё как всегда)
-
-6) Изменяем параметр "(По умолчанию)"
-
-7) В ветке "HKEY_CLASSES_ROOT\.OSzone\shell" создаём ещё один раздел, который будет дополнительным пунктом в контекстном меню .OSzone файлов. Я его так и оставил с названием "Новый раздел #1"
-
-8) Создаём для пункта "Новый раздел #1" подраздел "command"
-
-9) В подразделе "command" в разделе "Новый раздел #1" изменяем параметр "(По умолчанию)"
-
-#CE
-;WriteTest()
 
 
 Func WriteTest()
