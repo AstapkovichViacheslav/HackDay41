@@ -8,7 +8,6 @@
 
 #ce ----------------------------------------------------------------------------
 #include <Debug.au3>
-#include "OOoCOM_UDF_v08.au3"
 _DebugSetup("test",false,2)
 ; Script Start - Add your code below here
 ;Template_analyze("C:\WORK\HackDay41\Templates\default_templ.doc")

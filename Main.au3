@@ -43,7 +43,7 @@ IF not @Compiled Then
 EndIf
 ;Если нет входных параметров - запущены на установку
 If $CmdLine[0]=0 Then
-	Install()
+	;Install()
 	;Exit
 EndIf
 ;Если мы запщены по файлу - считаем настройки из реестра
@@ -54,7 +54,12 @@ Main_InitPref()
 Local $File 	= Main_getFileName()
 ;Определяем шаблон - развязку
 Local $Template = Template_TemplateEditor()
-
+;Получаю данные из файла (запускаем парсинг)
+Local $ParsedData = Main_ParseFile($File)
+;Выбираем Файл оформления
+Local $StyleFile = FileOpenDialog("Выбрать оформление", @ScriptDir,"All (*.*")
+;Генерируем на основе данных файл
+Local $Gen = Main_Generate($ParsedData, $Template, $StyleFile)
 
 
 ;Local $Test = FileOpenDialog("Choose file",@ScriptDir,"TEst (*.*)")
@@ -83,4 +88,27 @@ EndFunc
 Func Main_getFileName()
 	;Пока что заглушка
 	return @ScriptDir&"\TestRailExport.xml"
+EndFunc
+
+Func Main_ParseFile($FilePath)
+	Local $src = _Source()			;Создаю ресурс
+	$src.setSrc($FilePath)			;Указываю путь
+	$src.setModel( _Source_XML() )	;Указываю способ обработки
+	$src.open()						;Открываю источник
+	return $src
+EndFunc
+
+Func Main_Generate($ParsedData, $Template, $StyleFile)
+	Local $Data = $ParsedData.getData()
+	Local $MileStoneName 	= $ParsedData.select("milestone/name",$Data)
+	Local $TestPlanName		= $ParsedData.select("milestone/runs/plan/name",$Data)
+	Local $TestPlanRuns 	= $ParsedData.select("milestone/runs/plan/runs",$Data)
+	For $i=1 to UBound($TestPlanRuns)-1
+		ConsoleWrite($TestPlanRuns[2][0] & @CRLF)
+		;$Main_RunAnalyze($TestPlanRuns[2][0])
+	Next
+EndFunc
+
+Func Main_RunAnalyze()
+
 EndFunc
