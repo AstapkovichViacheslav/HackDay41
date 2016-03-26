@@ -20,6 +20,9 @@ Global const $pref = ObjCreate("Scripting.Dictionary")	;Глобальные н�
 #include <GuiComboBox.au3>
 #include <GuiComboBoxEx.au3>
 #include <WindowsConstants.au3>
+#include <EditConstants.au3>
+#include <GUIConstantsEx.au3>
+#include <WindowsConstants.au3>
 #include <install.au3>
 
 #include ".\Models\_sourceModel_XML.au3"				;Реализация для XML
