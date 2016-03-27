@@ -18,6 +18,7 @@ Func _Source_XML()
 		.AddMethod("selectNode","_SourceXML_selectNode")
 		.AddMethod("deleteNode","_SourceXML_deleteNode")
 		.AddMethod("setParam",	"_SourceXML_setParam")
+		.AddMethod("getParams",	"_SourceXML_getParams")
 
         .AddProperty("obj", $ELSCOPE_PRIVATE, ObjCreate("Microsoft.XMLDOM") )
 		.AddProperty("src", $ELSCOPE_PRIVATE, "")
@@ -39,7 +40,7 @@ Func _SourceXML_setSrc($oSelf, $Path)
 EndFunc
 
 ;Получить путь к источнику
-Func _SourceXML_getSrc($oSelf, $Path)
+Func _SourceXML_getSrc($oSelf)
 	#forceref $oSelf
 	return $oSelf.src
 EndFunc
@@ -47,6 +48,7 @@ EndFunc
 ;Указать модель работы с данными
 Func _SourceXML_create($oSelf)
 	#forceref $oSelf
+	IF fileExists($oSelf.src) then FileDelete($oSelf.src)
 	return $oSelf.save()
 EndFunc
 
@@ -173,8 +175,12 @@ Func _SourceXML_createNode($oSelf, $Node)
 		_DebugOut("!> Ошибка obj")
 		return 0
 	EndIf
-	Local $element = $oSelf.obj.createElement( $Node("tagName") )
-	If $Node.exists("text") then $element.text = $Node("text")
+	If ObjName($NOde) = "IXMLDOMElement" Then
+		Local $element = $Node
+	Else
+		Local $element = $oSelf.obj.createElement( $Node("tagName") )
+		If $Node.exists("text") then $element.text = $Node("text")
+	EndIf
 	$Root.appendChild($element)
 	;Если создаётся корневой узел - создаём XML инструкцию
 	If $oSelf.ptr = "" then
@@ -194,19 +200,26 @@ EndFunc
 
 Func _SourceXML_selectNode($oSelf, $Node)
 	#forceref $oSelf
-	If $Node="" then return 0
 	Local $Root
 	If $oSelf.ptr = "" then
 		$Root = $oSelf.obj.documentElement
 	Else
 		$Root = $oSelf.ptr
 	EndIf
+	;Способ получить родителя
+	If $Node="" then
+		$Root = $oSelf.obj.documentElement
+		$oSelf.ptr = $Root
+		return $Root
+	EndIf
+	If $Node=".." then
+		$Root = $oSelf.ptr.parentNode
+		$oSelf.ptr = $Root
+		return $Root
+	EndIf
 	If not IsObj($Root) then $Root = $oSelf.obj
 	If StringLen($Root.tagName) = 0 then $Root = $oSelf.obj
-		;_DebugOut("!> Не удалось найти узел как точку отсчёта")
-		;return 0
-	;EndIf
-	;
+
 	ConsoleWrite("RootNode: "& $Root.tagName & @CRLF)
 	Local $Selected = $Root.selectSingleNode($Node)
 	If not isObj($Selected) Then
@@ -240,4 +253,21 @@ Func _SourceXML_setParam($oSelf, $Param, $Value)
 	$oSelf.ptr.setAttribute($Param, $Value)
 	$oSelf.save()
 	return 1
+EndFunc
+
+Func _SourceXML_getParams($oSelf)
+	#forceref $oSelf
+	If $oSelf.ptr = "" then
+		_DebugOut("!> Не выбран узел ($obj.selectNode)")
+		return 0
+	EndIf
+	;Получаем атрибуты
+	Local $Attribs[1][2]
+	Local $Prop = $oSelf.ptr.attributes
+	For $i=0 to $Prop.length-1
+		Redim $Attribs[ UBound($Attribs)+1 ][2]
+		$Attribs[ UBound($Attribs)-1 ][0] = $Prop.Item($i).name
+		$Attribs[ UBound($Attribs)-1 ][1] = $Prop.Item($i).text
+	Next
+	return $Attribs
 EndFunc

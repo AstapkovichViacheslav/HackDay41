@@ -211,7 +211,7 @@ Func Template_TemplateEditor()
 	Local $items = $src.getData()	;Получаем данные из источника
 	;Закрываем окно
 	GUIDelete($Form1)
-	return $items
+	return $src
 EndFunc
 
 ;Редактор элемента шаблона
