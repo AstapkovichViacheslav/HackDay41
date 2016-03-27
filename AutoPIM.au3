@@ -44,11 +44,11 @@ IF not @Compiled Then
 EndIf
 ;Если нет входных параметров - запущены на установку
 If $CmdLine[0]=0 Then
-	Install()
+	;Install()
 	;Exit
 EndIf
 ;Если мы запщены по файлу - считаем настройки из реестра
-Main_InitPref()
+;Main_InitPref()
 #EndRegion
 
 #Region Generation

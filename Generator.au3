@@ -29,6 +29,11 @@ Func Generator_createDoc($PtrnSrc, $Path = "C:\testD.xml")
 	Next
 	$src.createNode($RootNode)
 	$src.save()
+
+	Local $Instr = $src.element("mso-application progid='Word.Document'","ProcessingInstruction")
+	$src.createNode($Instr)
+	$src.save()
+
 	;Оформим настройки документа
 	Local $DocProp = $src.element("o:DocumentProperties")
 	$src.createNode($DocProp)
@@ -37,8 +42,10 @@ Func Generator_createDoc($PtrnSrc, $Path = "C:\testD.xml")
 	Local $Params 	= $Node.childNodes
 
 	For $i=1 to $Params.length-1
-		$Node = $src.element($Params.Item($i).tagName)
-		$src.createNode($Node)
+		If not IsObj($Params.Item($i)) then ContinueLoop
+		ConsoleWrite("Add param:" & $Params.Item($i).tagName & @CRLF)
+		ConsoleWrite("Add value:" & $Params.Item($i).text & @CRLF)
+		$src.createNode($Params.Item($i))
 		$src.selectNode("..")
 	Next
 	$src.save()
@@ -77,16 +84,14 @@ Func Generator_addPatternPart($PtrnSrc, $Path)
 	$PtrnSrc.selectNode("")
 	Local $PatternRoot 	= $PtrnSrc.selectNode("w:body/wx:sect")
 	Local $DocRoot 		= $src.selectNode("w:body/wx:sect")
-	MSgbox(0,"test", $DocRoot.tagName & @TAB & $PatternRoot.tagName)
 	;Создаём шаблонную часть
 	;Идём по всем секциям
 	Local $Items 		= $PatternRoot.childNodes
-	msgbox(0,"test count", $Items.length-1)
-
-	For $i=1 to $Items.length-1
+	_DEbugOut("По шаблону будет создано узлов: " & $Items.length-1)
+	For $i=0 to $Items.length-1
 		Local $Item = $Items.Item($i)
 		If not IsObj($Item) then ContinueLoop
-		msgbox(0,"test", $Item.tagName)
+		;msgbox(0,"test", $Item.tagName)
 
 		If $Item.tagName = "w:sectPr" then ContinueLoop
 
