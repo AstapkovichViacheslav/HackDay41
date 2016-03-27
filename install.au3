@@ -114,10 +114,12 @@ Func Install()
 						deletePreviouslyInstalled()
 						CreateMenuItem("*", "[АвтоПИМ] Обработать файл")
 						InstallToPF()
-						GUICtrlSetData($NextButton,  StringFormat("Завершить"))
+						GUICtrlSetState($NextButton, $GUI_DISABLE)
 						GUICtrlSetData($Text, StringFormat("Шаг 3: Завершение установки\r\n\r\r\n\rАвтоПИМ успешно установлен.\r\nВызов программы осуществляется из контекстного меню выбранного файла.\r\n\r\r\n\r\r\n\rДля завершения работы инсталлятора нажмите кнопку Завершить"))
 						GUICtrlSetState($Steps_Label, $GUI_HIDE)
 						GUICtrlSetState($Text, $GUI_SHOW)
+						GUICtrlSetData($NextButton,  StringFormat("Завершить"))
+						GUICtrlSetState($NextButton, $GUI_ENABLE)
 					Case 4
 						Exit
 				EndSwitch
