@@ -55,7 +55,10 @@ Func Template_createTemplateFile($FileName)
 	Local $Node = $src.element("Templates")
 	$src.createNode($Node)
 	$src.save()
-	return $src
+	If not FileExists($Path) then
+		msgbox(32,"Информация", "Не удалось создать файл:" & $Path)
+	EndIf
+	return $Path
 EndFunc
 
 Func Template_prepare($FilePath)
@@ -137,10 +140,18 @@ Func Template_TemplateEditor()
 						GUICtrlCreateListViewItem($tmp[$i],$List1)
 					Next
 				EndIf
-			;ПОлучить список шаблонов
+			;Cоздание шаблона
 			Case $Button1
 				Local $tmpName = InputBox("Создание шаблона","Укажите название шаблона","TemplateNAme")
-				Template_createTemplateFile($tmpName)
+				If $tmpName = "" then
+					msgbox(64,"Информация","Шаблон не будет создан, так как не указано название")
+					ContinueLoop
+				EndIf
+				Local $tmpFile = Template_createTemplateFile($tmpName)
+				If not FileExists($tmpFile) Then
+					msgbox(64,"Информация","Не удалось создать новый файл шаблона, файл не добавлен")
+					ContinueLoop
+				EndIf
 				_GUICtrlListView_DeleteAllItems($List1)
 				$tmp = Template_getTemplateList()
 				If IsArray($tmp) Then

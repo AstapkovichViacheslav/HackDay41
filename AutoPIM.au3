@@ -44,11 +44,11 @@ IF not @Compiled Then
 EndIf
 ;Если нет входных параметров - запущены на установку
 If $CmdLine[0]=0 Then
-	Install()
+	;Install()
 	;Exit
 EndIf
 ;Если мы запщены по файлу - считаем настройки из реестра
-Main_InitPref()
+;Main_InitPref()
 #EndRegion
 
 #Region Generation
@@ -64,6 +64,9 @@ Local $StyleSrc		= Main_getFileSource($StyleFile)
 ;Генерируем на основе данных файл
 ;1 - Создание файла по шаблону
 Generator_createDoc($StyleSrc, "C:\test-doc.xml")
+;2 - Вставляем данные из шаблона
+Generator_addPatternPart($StyleSrc, "C:\test-doc.xml")
+;3 - Заполняем данные
 #EndRegion
 ;Local $Gen = Main_Generate($ParsedData, $Template, $StyleFile)
 
