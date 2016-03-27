@@ -13,6 +13,8 @@
 #include <StringConstants.au3>
 #include <MsgBoxConstants.au3>
 
+Const $PROG_NAME = "AutoPIM"
+
 #region GUI
 
 Global $InstallForm ; Окно инсталлятора
@@ -112,9 +114,12 @@ Func Install()
 						deletePreviouslyInstalled()
 						CreateMenuItem("*", "[АвтоПИМ] Обработать файл")
 						InstallToPF()
-						GUICtrlSetData($Steps_Label, StringFormat("Шаг 3: Завершение установки"))
-					Case Else
-
+						GUICtrlSetData($NextButton,  StringFormat("Завершить"))
+						GUICtrlSetData($Text, StringFormat("Шаг 3: Завершение установки\r\n\r\r\n\rАвтоПИМ успешно установлен.\r\nВызов программы осуществляется из контекстного меню выбранного файла.\r\n\r\r\n\r\r\n\rДля завершения работы инсталлятора нажмите кнопку Завершить"))
+						GUICtrlSetState($Steps_Label, $GUI_HIDE)
+						GUICtrlSetState($Text, $GUI_SHOW)
+					Case 4
+						Exit
 				EndSwitch
 		EndSwitch
 	WEnd
@@ -130,14 +135,14 @@ Func findPreviouslyInstalled()
 	Local $Key
 
 	For $Type in $arrType
-		$Key = "HKEY_CLASSES_ROOT\"&$Type&"\Shell\AutoPIM"
+		$Key = "HKEY_CLASSES_ROOT\"&$Type&"\Shell\" & $PROG_NAME
 		If RegRead($Key, "MUIVerb") <> "" Then
 			_ArrayAdd($arrRegDelete, $Key)
 			local $path = RegRead($Key&"\command", "")
 
 			; Если мы нашли путь то сохраним его
 			if $path <> "" Then
-				$path = StringLeft($path, StringInStr($path, "AutoPIM") + StringLen("AutoPIM") - 1)
+				$path = StringLeft($path, StringInStr($path, $PROG_NAME) + StringLen($PROG_NAME) - 1)
 				if FileExists($path) Then
 					if _ArraySearch($arrDirDelete, $path) = -1 Then
 						_ArrayAdd($arrDirDelete, $path)
@@ -174,10 +179,10 @@ Func findPreviouslyInstalled()
 EndFunc
 
 Func CreateMenuItem($Type, $GroupName)
-	Local $Key = "HKEY_CLASSES_ROOT\"&$Type&"\Shell\AutoPIM"
+	Local $Key = "HKEY_CLASSES_ROOT\"&$Type&"\Shell\"&$PROG_NAME
 	RegWrite($key)
 	RegWrite($key,"MUIVerb","REG_SZ",$GroupName)
-	RegWrite($key & "\command", "", "REG_SZ", @ProgramFilesDir & "\AutoPIM\AutoPIM.exe")
+	RegWrite($key & "\command", "", "REG_SZ", @ProgramFilesDir & "\" & $PROG_NAME & "\" & $PROG_NAME & ".exe ""%l"", %I")
 
 	;Для подкоманд
 	;RegWrite($key,"SubCommands","REG_SZ",$GroupName&"1" &";"& $Groupname&"2")
@@ -185,7 +190,7 @@ Func CreateMenuItem($Type, $GroupName)
 EndFunc
 
 Func InstallToPF()
-	FileCopy ( ".\main.exe", @ProgramFilesDir & "\AutoPIM\", $FC_CREATEPATH)
+	FileCopy ( ".\" & $PROG_NAME & ".exe", @ProgramFilesDir & "\"& $PROG_NAME & "\", $FC_CREATEPATH)
 EndFunc
 
 Func deletePreviouslyInstalled()
