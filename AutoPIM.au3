@@ -44,7 +44,7 @@ IF not @Compiled Then
 EndIf
 ;Если нет входных параметров - запущены на установку
 If $CmdLine[0]=0 Then
-	;Install()
+	Install()
 	;Exit
 EndIf
 ;Если мы запщены по файлу - считаем настройки из реестра
@@ -117,8 +117,6 @@ Func Main_getFileData($FilePath)
 	$src.open()						;Открываю источник
 	return $src.getData()
 EndFunc
-
-
 
 Func Main_Generate($ParsedData, $Template, $StyleFile)
 	Local $Data = $ParsedData.getData()
