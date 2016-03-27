@@ -11,6 +11,9 @@
 #include <Array.au3>
 #include <FileConstants.au3>
 #include <StringConstants.au3>
+#include <MsgBoxConstants.au3>
+
+Const $PROG_NAME = "AutoPIM"
 
 #region GUI
 
@@ -106,8 +109,17 @@ Func Install()
 						SetUserInfo(True)
 						GUICtrlSetData($Steps_Label, StringFormat("Шаг 2: Регистрация данных о пользователе в системе"))
 					Case 3
+						$installStep = $installStep + 1
 						SetUserInfo(False)
-						GUICtrlSetData($Steps_Label, StringFormat("Шаг 3: Завершение установки"))
+						deletePreviouslyInstalled()
+						CreateMenuItem("*", "[АвтоПИМ] Обработать файл")
+						InstallToPF()
+						GUICtrlSetData($NextButton,  StringFormat("Завершить"))
+						GUICtrlSetData($Text, StringFormat("Шаг 3: Завершение установки\r\n\r\r\n\rАвтоПИМ успешно установлен.\r\nВызов программы осуществляется из контекстного меню выбранного файла.\r\n\r\r\n\r\r\n\rДля завершения работы инсталлятора нажмите кнопку Завершить"))
+						GUICtrlSetState($Steps_Label, $GUI_HIDE)
+						GUICtrlSetState($Text, $GUI_SHOW)
+					Case 4
+						Exit
 				EndSwitch
 		EndSwitch
 	WEnd
@@ -123,13 +135,14 @@ Func findPreviouslyInstalled()
 	Local $Key
 
 	For $Type in $arrType
-		$Key = "HKEY_CLASSES_ROOT\"&$Type&"\Shell\AutoPIM"
+		$Key = "HKEY_CLASSES_ROOT\"&$Type&"\Shell\" & $PROG_NAME
 		If RegRead($Key, "MUIVerb") <> "" Then
 			_ArrayAdd($arrRegDelete, $Key)
 			local $path = RegRead($Key&"\command", "")
+
 			; Если мы нашли путь то сохраним его
 			if $path <> "" Then
-				$path = StringLeft($path, StringInStr($path, "AutoPIM.exe") - 2)
+				$path = StringLeft($path, StringInStr($path, $PROG_NAME) + StringLen($PROG_NAME) - 1)
 				if FileExists($path) Then
 					if _ArraySearch($arrDirDelete, $path) = -1 Then
 						_ArrayAdd($arrDirDelete, $path)
@@ -165,11 +178,47 @@ Func findPreviouslyInstalled()
 	return $message
 EndFunc
 
-Func CreateMenuItem($GroupName)
-	Local $Type = "xml"
-	Local $Key = "HKEY_CLASSES_ROOT\."&$Type&"\Shell\"&@ScriptName
+Func CreateMenuItem($Type, $GroupName)
+	Local $Key = "HKEY_CLASSES_ROOT\"&$Type&"\Shell\"&$PROG_NAME
 	RegWrite($key)
 	RegWrite($key,"MUIVerb","REG_SZ",$GroupName)
-	RegWrite($key,"SubCommands","REG_SZ",$GroupName&"1" &";"& $Groupname&"2")
+	RegWrite($key & "\command", "", "REG_SZ", @ProgramFilesDir & "\" & $PROG_NAME & "\" & $PROG_NAME & ".exe ""%l"", %I")
+
+	;Для подкоманд
+	;RegWrite($key,"SubCommands","REG_SZ",$GroupName&"1" &";"& $Groupname&"2")
 	;http://rapidsoft.org/articles/wintuning/item/101-context_menu_section
+EndFunc
+
+Func InstallToPF()
+	FileCopy ( ".\" & $PROG_NAME & ".exe", @ProgramFilesDir & "\"& $PROG_NAME & "\", $FC_CREATEPATH)
+EndFunc
+
+Func deletePreviouslyInstalled()
+	Local $message
+	local $result
+
+	For $reg in $arrRegDelete
+		$result = RegDelete($reg)
+		If 	$result <> 1 then
+			Switch $result
+				Case 0
+					$message = "Ключ: " & $reg & @LF & " не найден"
+				Case 2
+					$message = "Ошибка удаления ключа" & @LF & $reg
+			EndSwitch
+		MsgBox($MB_ICONERROR, "Ошибка удаления из реестра", $message)
+		EndIf
+	Next
+
+	For $dir in $arrDirDelete
+		$result = FileDelete($dir)
+		If $result <> 1 Then
+			MsgBox($MB_ICONERROR, "Ошибка удаления файлов каталога", "Ошибка удаления файлов:" & @LF & $dir)
+		EndIf
+
+		$result = DirRemove($dir)
+		If $result <> 1 Then
+			MsgBox($MB_ICONERROR, "Ошибка удаления каталога", "Ошибка удаления каталога:" & @LF & $dir)
+		EndIf
+	Next
 EndFunc
