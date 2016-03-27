@@ -64,6 +64,9 @@ Local $StyleSrc		= Main_getFileSource($StyleFile)
 ;Генерируем на основе данных файл
 ;1 - Создание файла по шаблону
 Generator_createDoc($StyleSrc, "C:\test-doc.xml")
+;2 - Вставляем данные из шаблона
+Generator_addPatternPart($StyleSrc, "C:\test-doc.xml")
+;3 - Заполняем данные
 #EndRegion
 ;Local $Gen = Main_Generate($ParsedData, $Template, $StyleFile)
 
