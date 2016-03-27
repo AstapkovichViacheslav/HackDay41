@@ -26,6 +26,7 @@ Func _Source($SourcePath="")
 		.AddMethod("selectNode","_Source_selectNode")	;Выбор узла (переход в узел)
 		.AddMethod("deleteNode","_Source_deleteNode")	;Выбор узла (переход в узел)
 		.AddMethod("setParam",	"_Source_setParam")		;Указать атрибуты/параметры узла
+		.AddMethod("getParams",	"_Source_getParams")	;Указать атрибуты/параметры узла
 
 		.AddProperty("src", 	$ELSCOPE_PRIVATE, $SourcePath)
         .AddProperty("model", 	$ELSCOPE_PRIVATE, null)
@@ -38,6 +39,9 @@ EndFunc
 Func _Source_createElement($oSelf, $tagName, $tag = "tagName")
 	#forceref $oSelf
 	Local $Element = ObjCreate("Scripting.Dictionary")
+	If StringLen($tagName)=0 Then
+		_DebugOut("+> При создании элемента не указан tag: "& $oSelf.src)
+	EndIf
 	$Element.add($tag, $tagName)
 	return $Element
 EndFunc
@@ -46,6 +50,7 @@ EndFunc
 Func _Source_setSrc($oSelf, $Path)
 	#forceref $oSelf
 	$oSelf.src = $Path
+	$oSelf.model.setSrc($Path)
 	_DebugOut("+> Путь к источнику: "& $oSelf.src)
 EndFunc
 
@@ -86,7 +91,7 @@ Func _Source_create($oSelf)
 		$oSelf.model.setSrc($oSelf.src)
 	EndIf
 	Local $Ret = $oSelf.model.create()
-	_DebugOut("+> Создан источник: "&$Ret)
+	_DebugOut("+> Создан источник["& $oSelf.getSrc()&"]: "&$Ret)
 	return $Ret
 EndFunc
 
@@ -117,14 +122,14 @@ Func _Source_open($oSelf)
 		return
 	EndIf
 	If not $oSelf.model.isReady Then
-		_DebugOut("!> Источник данных не готов!")
+		_DebugOut("!> Источник данных '"&$oSelf.model.getSrc()&"' не готов!")
 		Return
 	EndIf
 	If $oSelf.model.getSrc() = "" Then
 		$oSelf.model.setSrc($oSelf.src)
 	EndIf
 	Local $code = $oSelf.model.open()
-	_DebugOut("+> Источник данных открыт:"&$code)
+	_DebugOut("+> Источник данных ["& $oSelf.model.getSrc() &"] открыт:"&$code)
 EndFunc
 
 Func _Source_getData($oSelf)
@@ -134,7 +139,7 @@ Func _Source_getData($oSelf)
 		return
 	EndIf
 	If not $oSelf.model.isReady Then
-		_DebugOut("!> Источник данных не готов!")
+		_DebugOut("!> Источник данных '"&$oSelf.model.getSrc()&"' не готов!")
 		Return
 	EndIf
 	Local $Data = $oSelf.model.getData()
@@ -216,16 +221,12 @@ Func _Source_createNode($oSelf, $Node)
 		_DebugOut("!> Для работы с данными не передан src.element!")
 		return
 	EndIf
-	If ObjName($Node) <> "Dictionary" Then
-		_DebugOut("!> Для работы с данными передан некорректный объект!")
-		return
-	EndIf
 	If not $oSelf.model.isReady Then
 		_DebugOut("!> Источник данных не готов!")
 		Return
 	EndIf
 	Local $code = $oSelf.model.createNode($Node)
-	_DebugOut("+> Создание узла:"& IsArray($code) )
+	_DebugOut("+> Создание узла['"& $Node.Item(1)&"']:"& IsArray($code) )
 	return $code
 EndFunc
 
@@ -236,7 +237,7 @@ Func _Source_selectNode($oSelf, $Path)
 		return
 	EndIf
 	Local $code = $oSelf.model.selectNode($Path)
-	_DebugOut("+> Выбор узла '"& $Path &"':"& IsObj($code) )
+	_DebugOut("+> ["& $oSelf.model.getSrc() &"]Выбор узла '"& $Path &"':"& IsObj($code) )
 	return $code
 EndFunc
 
@@ -250,6 +251,21 @@ Func _Source_setParam($oSelf, $Param, $Value)
 	_DebugOut("+> Изменение параметра '"& $Param &"'" )
 	return $code
 EndFunc
+
+Func _Source_getParams($oSelf, $Node="")
+	#forceref $oSelf
+	If not IsObj($oSelf.model) Then
+		_DebugOut("!> Для работы с данными не указана модель!")
+		return
+	EndIf
+	;Если указано - перейдём куда сказано
+	If $Node <> "" then $oSelf.select($Node)
+	;Получим параметры
+	Local $code = $oSelf.model.getParams()
+	_DebugOut("+> Получение параметров для '"& $Node &"'" )
+	return $code
+EndFunc
+
 
 Func _Source_deleteNode($oSelf)
 	#forceref $oSelf

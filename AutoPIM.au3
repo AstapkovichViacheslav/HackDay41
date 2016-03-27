@@ -31,6 +31,7 @@ _DebugSetup("DEBUG",true,2)								;Настройка дебагера (2 - консоль)
 #include <install.au3>
 ;Подключаем UDF для шаблонов
 #include "Template.au3"									;Работа с шаблонами
+#include "Generator.au3"								;Работа с генератором документов
 Opt("MustDeclareVars", 1)								;Все переменные должны быть объявлены
 
 #Region Initialization
@@ -43,18 +44,28 @@ IF not @Compiled Then
 EndIf
 ;Если нет входных параметров - запущены на установку
 If $CmdLine[0]=0 Then
-	Install()
+	;Install()
 	;Exit
 EndIf
 ;Если мы запщены по файлу - считаем настройки из реестра
 Main_InitPref()
 #EndRegion
 
+#Region Generation
 ;Определяем файл, по которому мы вызваны
-Local $File 	= Main_getFileName()
-;Определяем шаблон - развязку
-Local $Template = Template_TemplateEditor()
-
+Local $File 		= Main_getFileName()
+;Определяем шаблон - развязку (получаем ресурс шаблона)
+Local $TemplateSrc 	= Template_TemplateEditor()
+;Получаю данные из файла источника данных(файл как ресурс)
+Local $SourceFile 	= Main_getFileSource($File)
+;Выбираем Файл оформления
+Local $StyleFile 	= FileOpenDialog("Выбрать оформление", @ScriptDir,"All (*.xml)")
+Local $StyleSrc		= Main_getFileSource($StyleFile)
+;Генерируем на основе данных файл
+;1 - Создание файла по шаблону
+Generator_createDoc($StyleSrc, "C:\test-doc.xml")
+#EndRegion
+;Local $Gen = Main_Generate($ParsedData, $Template, $StyleFile)
 
 
 ;Local $Test = FileOpenDialog("Choose file",@ScriptDir,"TEst (*.*)")
@@ -84,3 +95,43 @@ Func Main_getFileName()
 	;Пока что заглушка
 	return @ScriptDir&"\TestRailExport.xml"
 EndFunc
+
+;Полаем выбранный источник как ресурс
+Func Main_getFileSource($FilePath)
+	_DebugOut("+> getFilSource '"& $FilePath&"'"& @CRLF)
+	Local $src = _Source()			;Создаю ресурс
+	$src.setSrc($FilePath)			;Указываю путь
+	$src.setModel( _Source_XML() )	;Указываю способ обработки
+	$src.open()						;Открываю источник
+	return $src
+EndFunc
+
+Func Main_getFileData($FilePath)
+	_DebugOut("+> getFilSource '"& $FilePath&"'"& @CRLF)
+	Local $src = _Source()			;Создаю ресурс
+	$src.setSrc($FilePath)			;Указываю путь
+	$src.setModel( _Source_XML() )	;Указываю способ обработки
+	$src.open()						;Открываю источник
+	return $src.getData()
+EndFunc
+
+
+
+Func Main_Generate($ParsedData, $Template, $StyleFile)
+	Local $Data = $ParsedData.getData()
+	Local $MileStoneName 	= $ParsedData.select("milestone/name",$Data)
+	Local $TestPlanName		= $ParsedData.select("milestone/runs/plan/name",$Data)
+	Local $TestPlanRuns 	= $ParsedData.select("milestone/runs/plan/runs",$Data)
+	For $i=1 to UBound($TestPlanRuns)-1
+		ConsoleWrite($TestPlanRuns[2][0] & @CRLF)
+		Main_RunAnalyze($TestPlanRuns[2][1])
+	Next
+EndFunc
+
+Func Main_RunAnalyze($TestRun)
+	ConsoleWrite( UBound($TestRun)-1 & @CRLF)
+	For $i=0 to UBound($TestRun)-1
+		ConsoleWrite($TestRun[$i][0] & @CRLF)
+	Next
+EndFunc
+
